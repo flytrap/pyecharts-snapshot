@@ -105,9 +105,7 @@ async def _main():
             delay = float(sys.argv[3])  # in seconds
             if len(sys.argv) == 5:
                 pixel_ratio = sys.argv[4]
-    await make_a_snapshot(
-        file_name, output, delay=delay, pixel_ratio=pixel_ratio
-    )
+    await make_a_snapshot(file_name, output, delay=delay, pixel_ratio=pixel_ratio)
 
 
 def show_help():
@@ -126,9 +124,7 @@ async def make_a_snapshot(
     logger.info(MESSAGE_GENERATING)
     file_type = output_name.split(".")[-1]
 
-    content = await async_make_snapshot(
-        file_name, file_type, pixel_ratio, delay
-    )
+    content = await async_make_snapshot(file_name, file_type, pixel_ratio, delay)
 
     if file_type in [SVG_FORMAT, B64_FORMAT]:
         save_as_text(content, output_name)
@@ -170,7 +166,11 @@ async def async_make_snapshot(
 
 
 async def get_echarts(url: str, snapshot_js: str):
-    browser = await launch()
+    browser = await launch(
+        executablePath="/usr/bin/google-chrome-stable",
+        headless=True,
+        args=["--no-sandbox"],
+    )
     page = await browser.newPage()
     await page.goto(url)
 
