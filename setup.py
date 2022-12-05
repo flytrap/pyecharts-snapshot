@@ -27,11 +27,12 @@ try:
 except (ValueError, UnicodeError, locale.Error):
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
-NAME = "pyecharts-snapshot"
+NAME = "pyecharts-snapshot-pro"
 AUTHOR = "pyecharts dev team"
-VERSION = "0.2.0"
+VERSION = "0.2.5"
 EMAIL = "info@pyecharts.com"
 LICENSE = "MIT"
+<<<<<<< HEAD
 ENTRY_POINTS = {
     "console_scripts": [
         "snapshot = pyecharts_snapshot.main:main"
@@ -43,6 +44,13 @@ DESCRIPTION = (
 URL = "https://github.com/pyecharts/pyecharts-snapshot"
 DOWNLOAD_URL = "%s/archive/0.2.0.tar.gz" % URL
 FILES = ["README.rst", 'CONTRIBUTORS.rst', "CHANGELOG.rst"]
+=======
+ENTRY_POINTS = {"console_scripts": ["snapshot = pyecharts_snapshot.main:main"]}
+DESCRIPTION = "renders pyecharts output as image"
+URL = "https://github.com/flytrap/pyecharts-snapshot"
+DOWNLOAD_URL = f"{URL}/archive/{VERSION}.tar.gz"
+FILES = ["README.rst", "CONTRIBUTORS.rst", "CHANGELOG.rst"]
+>>>>>>> docker
 KEYWORDS = [
     "python",
     "echarts",
@@ -53,8 +61,12 @@ KEYWORDS = [
     "jpeg",
     "svg",
     "pdf",
+<<<<<<< HEAD
     "pyecharts",
     "chart",
+=======
+    "playwright",
+>>>>>>> docker
 ]
 
 CLASSIFIERS = [
@@ -72,11 +84,15 @@ CLASSIFIERS = [
 
 ]
 
+<<<<<<< HEAD
 
 INSTALL_REQUIRES = [
     "pillow",
     "pyppeteer>=0.0.25",
 ]
+=======
+INSTALL_REQUIRES = ["pillow", "playwright"]
+>>>>>>> docker
 SETUP_COMMANDS = {}
 
 PACKAGES = find_packages(exclude=["ez_setup", "examples", "tests", "tests.*"])
@@ -84,6 +100,17 @@ EXTRAS_REQUIRE = {
 }
 # You do not need to read beyond this line
 PUBLISH_COMMAND = "{0} setup.py sdist bdist_wheel upload -r pypi".format(sys.executable)
+<<<<<<< HEAD
+=======
+GS_COMMAND = (
+    f"gs pyecharts-snapshot v{VERSION} "
+    + "Find {VERSION} in changelog for more details"
+)
+NO_GS_MESSAGE = (
+    "Automatic github release is disabled. " + "Please install gease to enable it."
+)
+UPLOAD_FAILED_MSG = 'Upload failed. please run "%s" yourself.' % PUBLISH_COMMAND
+>>>>>>> docker
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 GS_COMMAND = ("gs pyecharts-snapshot v0.2.0 " +

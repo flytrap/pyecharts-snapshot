@@ -1,13 +1,14 @@
-import os
-import sys
+import asyncio
 import base64
 import codecs
-import asyncio
+import os
+import sys
 from io import BytesIO
 
-import pyecharts_snapshot.logger as logger
 from PIL import Image
-from pyppeteer import launch
+from playwright.async_api import async_playwright
+
+import pyecharts_snapshot.logger as logger
 
 DEFAULT_DELAY = 1.5
 DEFAULT_PIXEL_RATIO = 2
@@ -104,9 +105,7 @@ async def _main():
             delay = float(sys.argv[3])  # in seconds
             if len(sys.argv) == 5:
                 pixel_ratio = sys.argv[4]
-    await make_a_snapshot(
-        file_name, output, delay=delay, pixel_ratio=pixel_ratio
-    )
+    await make_a_snapshot(file_name, output, delay=delay, pixel_ratio=pixel_ratio)
 
 
 def show_help():
@@ -120,13 +119,19 @@ async def make_a_snapshot(
     delay: float = DEFAULT_DELAY,
     pixel_ratio: int = DEFAULT_PIXEL_RATIO,
     verbose: bool = True,
+    browser: str = "firefox",
 ):
+    assert browser in (
+        "chromium",
+        "firefox",
+        "webkit",
+    ), "only support chromium, firefox, webkit"
     logger.VERBOSE = verbose
     logger.info(MESSAGE_GENERATING)
     file_type = output_name.split(".")[-1]
 
     content = await async_make_snapshot(
-        file_name, file_type, pixel_ratio, delay
+        file_name, file_type, pixel_ratio, delay, browser
     )
 
     if file_type in [SVG_FORMAT, B64_FORMAT]:
@@ -152,7 +157,11 @@ async def make_a_snapshot(
 
 
 async def async_make_snapshot(
-    html_path: str, file_type: str, pixel_ratio: int = 2, delay: int = 2
+    html_path: str,
+    file_type: str,
+    pixel_ratio: int = 2,
+    delay: int = 2,
+    browser: str = "chromium",
 ):
     __actual_delay_in_ms = int(delay * 1000)
 
@@ -165,16 +174,22 @@ async def async_make_snapshot(
             __actual_delay_in_ms,
         )
 
-    return await get_echarts(to_file_uri(html_path), snapshot_js)
+    return await get_echarts(to_file_uri(html_path), snapshot_js, browser)
 
 
-async def get_echarts(url: str, snapshot_js: str):
-    browser = await launch()
-    page = await browser.newPage()
-    await page.goto(url)
+async def get_echarts(url: str, snapshot_js: str, browser: str):
+    assert browser in ("chromium", "firefox", "webkit")
+    kwargs = {"headless": True}
+    if browser != "webkit":
+        kwargs["args"] = ["--no-sandbox"]
+    logger.info(f"get_echarts use {browser}")
+    async with async_playwright() as p:
+        browser = await getattr(p, browser).launch(**kwargs)
+        page = await browser.new_page()
+        await page.goto(url)
+        content = await page.evaluate(snapshot_js)
+        await browser.close()
 
-    content = await page.evaluate(snapshot_js)
-    await browser.close()
     return content
 
 
