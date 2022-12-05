@@ -29,7 +29,7 @@ except (ValueError, UnicodeError, locale.Error):
 
 NAME = "pyecharts-snapshot-pro"
 AUTHOR = "flytrap"
-VERSION = "0.2.6"
+VERSION = "0.2.7"
 EMAIL = "hiddenstat@gmail.com"
 LICENSE = "MIT"
 
