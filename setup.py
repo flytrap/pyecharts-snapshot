@@ -24,15 +24,15 @@ try:
 except (ValueError, UnicodeError, locale.Error):
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
-NAME = "pyecharts-snapshot"
+NAME = "pyecharts-snapshot-pro"
 AUTHOR = "pyecharts dev team"
-VERSION = "0.2.1"
+VERSION = "0.2.5"
 EMAIL = "info@pyecharts.com"
 LICENSE = "MIT"
 ENTRY_POINTS = {"console_scripts": ["snapshot = pyecharts_snapshot.main:main"]}
 DESCRIPTION = "renders pyecharts output as image"
-URL = "https://github.com/pyecharts/pyecharts-snapshot"
-DOWNLOAD_URL = "%s/archive/0.2.1.tar.gz" % URL
+URL = "https://github.com/flytrap/pyecharts-snapshot"
+DOWNLOAD_URL = f"{URL}/archive/{VERSION}.tar.gz"
 FILES = ["README.rst", "CONTRIBUTORS.rst", "CHANGELOG.rst"]
 KEYWORDS = [
     "python",
@@ -44,6 +44,7 @@ KEYWORDS = [
     "jpeg",
     "svg",
     "pdf",
+    "playwright",
 ]
 
 CLASSIFIERS = [
@@ -57,7 +58,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.8",
 ]
 
-INSTALL_REQUIRES = ["pillow", "pyppeteer>=0.0.25"]
+INSTALL_REQUIRES = ["pillow", "playwright"]
 SETUP_COMMANDS = {}
 
 
@@ -66,7 +67,8 @@ EXTRAS_REQUIRE = {}
 # You do not need to read beyond this line
 PUBLISH_COMMAND = "{0} setup.py sdist bdist_wheel upload -r pypi".format(sys.executable)
 GS_COMMAND = (
-    "gs pyecharts-snapshot v0.2.1 " + "Find 0.2.1 in changelog for more details"
+    f"gs pyecharts-snapshot v{VERSION} "
+    + "Find {VERSION} in changelog for more details"
 )
 NO_GS_MESSAGE = (
     "Automatic github release is disabled. " + "Please install gease to enable it."
