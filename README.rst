@@ -169,7 +169,7 @@ Maintenance Instructions
 #. take screenshots of grid.pdf and snapshot.pdf in examples folder
 
 
-docker image
+docker image: arm use firfox is ok
 ================================================================================
 
 .. code-block:: bash
