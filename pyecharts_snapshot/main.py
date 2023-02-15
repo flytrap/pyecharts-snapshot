@@ -120,6 +120,7 @@ async def make_a_snapshot(
     pixel_ratio: int = DEFAULT_PIXEL_RATIO,
     verbose: bool = True,
     browser: str = "firefox",
+    locale: str = "zh-CN",
 ):
     assert browser in (
         "chromium",
@@ -131,7 +132,7 @@ async def make_a_snapshot(
     file_type = output_name.split(".")[-1]
 
     content = await async_make_snapshot(
-        file_name, file_type, pixel_ratio, delay, browser
+        file_name, file_type, pixel_ratio, delay, browser, locale
     )
 
     if file_type in [SVG_FORMAT, B64_FORMAT]:
@@ -161,7 +162,8 @@ async def async_make_snapshot(
     file_type: str,
     pixel_ratio: int = 2,
     delay: int = 2,
-    browser: str = "chromium",
+    browser: str = "firefox",
+    locale: str = "zh-CN",
 ):
     __actual_delay_in_ms = int(delay * 1000)
 
@@ -174,10 +176,10 @@ async def async_make_snapshot(
             __actual_delay_in_ms,
         )
 
-    return await get_echarts(to_file_uri(html_path), snapshot_js, browser)
+    return await get_echarts(to_file_uri(html_path), snapshot_js, browser, locale)
 
 
-async def get_echarts(url: str, snapshot_js: str, browser: str):
+async def get_echarts(url: str, snapshot_js: str, browser: str, locale="zh-CN"):
     assert browser in ("chromium", "firefox", "webkit")
     kwargs = {"headless": True}
     if browser != "webkit":
@@ -185,10 +187,11 @@ async def get_echarts(url: str, snapshot_js: str, browser: str):
     logger.info(f"get_echarts use {browser}")
     async with async_playwright() as p:
         browser = await getattr(p, browser).launch(**kwargs)
-        page = await browser.new_page()
+        c = await browser.new_context(locale=locale) if locale else browser
+        page = await c.new_page()
         await page.goto(url)
         content = await page.evaluate(snapshot_js)
-        await browser.close()
+        await c.close()
 
     return content
 
